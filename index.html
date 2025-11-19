@@ -363,7 +363,7 @@ function sendData(rows, type) {
   }
 
   if (sendBtn) sendBtn.disabled = true;
-
+    rows.forEach(r => r.type = type);
   fetch(EXPORT_WEBAPP_URLS[type], {
     method: 'POST',
 
