@@ -370,7 +370,8 @@ function sendData(rows, type) {
     // ❗ مهم جداً — منع الـ OPTIONS Preflight
     headers: { 'Content-Type': 'text/plain' },
 
-    body: JSON.stringify(rows)
+   rows.forEach(r => r.type = type);
+body: JSON.stringify(rows);
   })
   .then(res => res.text())
   .then(result => {
