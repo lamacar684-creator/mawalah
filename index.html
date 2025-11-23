@@ -437,9 +437,9 @@ function resetForm(type) {
 
 
 function noAbsentees() {
-  const teacher = document.getElementById('teacherNameAbs').value;
-  const grade = document.getElementById('gradeSelectAbs').value;
-  const section = document.getElementById('sectionSelectAbs').value;
+  const teacher = document.getElementById('teacherNameAbs').value.trim();
+  const grade = document.getElementById('gradeSelectAbs').value.trim();
+  const section = document.getElementById('sectionSelectAbs').value.trim();
   const loadingSpan = document.getElementById('loadingAbs');
   const sendBtn = document.querySelector("button[onclick='noAbsentees()']");
 
@@ -448,21 +448,25 @@ function noAbsentees() {
     return;
   }
 
+  // إظهار حالة الإرسال
   if (loadingSpan) loadingSpan.style.display = 'inline';
   if (sendBtn) sendBtn.disabled = true;
 
+  // البيانات المرسلة لجوجل شيت
   const rows = [{
-    name: "لا يوجد غياب",
+    serial: 1,
+    type: "Abs",
     phone: "",
+    name: "لا يوجد غياب",
     message: `لا يوجد غياب في الصف ${grade} / ${section} - المعلم: ${teacher}`
   }];
 
   fetch(EXPORT_WEBAPP_URLS['Abs'], {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(rows)
-  }).then(() => {
+  })
+  .then(() => {
     if (loadingSpan) loadingSpan.textContent = '✅ تم الإرسال بنجاح';
     setTimeout(() => {
       if (loadingSpan) {
@@ -470,15 +474,17 @@ function noAbsentees() {
         loadingSpan.textContent = '⏳ جاري الإرسال...';
       }
     }, 1500);
+
     if (sendBtn) sendBtn.disabled = false;
-    resetForm(type);  // 🧹 تفريغ النموذج تلقائيًا
-    resetForm('Abs');
-  }).catch(err => {
+
+    resetForm('Abs'); // ← التصحيح الصحيح
+  })
+  .catch(err => {
     alert('❌ فشل الإرسال');
     console.error(err);
+
     if (loadingSpan) loadingSpan.style.display = 'none';
     if (sendBtn) sendBtn.disabled = false;
-    resetForm(type);  // 🧹 تفريغ النموذج تلقائيًا
   });
 }
 
